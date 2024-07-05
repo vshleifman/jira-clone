@@ -1,44 +1,51 @@
 import styled from "styled-components"
 import GridCol from "./gridCol"
+import {Data, statusList} from "./mockData"
 
 const Row = styled.div`
   display: grid;
   grid-template-rows: min-content auto;
-  gap: 4px;
+  gap: 6px;
 `
 
 const RowHeading = styled.div`
-  padding: 4px;
+  padding: 2px 12px;
   border: 1px solid green;
 `
 
 const RowBody = styled.div<{cols: number}>`
   display: grid;
-  gap: 4px;
+  gap: 12px;
   grid-template-columns: ${({cols}) => `repeat(${cols}, 1fr)`};
 `
 
 const GridRow = ({
   rowName,
-  cols,
+  ticketsSortedByStatus,
   handleClick,
-  id,
 }: {
   rowName: string
-  cols: {[key: string]: {tickets: {[key: string]: {title: string}}}}
-  handleClick: (ticket: number, newRow: number, newCol: number) => void
+  ticketsSortedByStatus: {[key: string]: Data[]}
+  handleClick: (
+    ticketId: number,
+    targetStatus: string,
+    targetEpic: string
+  ) => void
   id: number
 }) => {
   return (
     <Row>
       <RowHeading>{rowName}</RowHeading>
-      <RowBody cols={Object.keys(cols).length}>
-        {Object.values(cols).map((col, i) => {
+      <RowBody cols={statusList.length}>
+        {statusList.map(col => {
+          console.log({col, tickets: ticketsSortedByStatus[col]})
+
           return (
             <GridCol
-              id={`row${id}-col${i + 1}`}
-              tickets={col.tickets}
+              tickets={ticketsSortedByStatus[col]}
               handleClick={handleClick}
+              status={col}
+              epic={rowName}
             />
           )
         })}

@@ -1,63 +1,72 @@
 import {useState} from "react"
 import styled from "styled-components"
-import {data, newData} from "./mockData"
+import {Data, data, epicsList, statusList} from "./mockData"
 import {moveTicket} from "./helpers/moveTicket"
 import GridRow from "./gridRow"
 
-const Container = styled.div<{rows: number; columns: number}>`
+const Container = styled.div<{rows: number}>`
   display: grid;
-
+  grid-template-rows: ${({rows}) => `min-content repeat(${rows}, auto)`};
   height: 66vh;
   width: 100%;
   gap: 8px;
   padding: 4px;
   border: 1px solid black;
-  /* grid-template-rows: ${({rows}) => `repeat(${rows}, 1fr)`};
-  grid-template-columns: ${({columns}) => `repeat(${columns}, 1fr)`}; */
-  grid-template-rows: ${({rows}) => `repeat(${rows}, 1fr)`};
-  /* grid-template-columns: ${({columns}) => `repeat(${columns}, 1fr)`}; */
+`
+
+const StatusesBar = styled.div<{columns: number}>`
+  display: grid;
+  grid-template-columns: ${({columns}) => `repeat(${columns}, 1fr)`};
+  gap: 12px;
+`
+
+const StatusTitle = styled.div`
+  border: 1px solid blue;
+  padding: 4px;
 `
 
 const App = () => {
   const [dataState, setDataState] = useState(data)
-  const columnsCount = Object.keys(dataState[1].cols).length
-  const rowsCount = Object.keys(dataState).length
 
-  const handleClick = (ticket: number, newRow: number, newCol: number) => {
-    const res = moveTicket(dataState, ticket, newRow, newCol)
-    console.log({res})
-    setDataState({...res})
+  const handleClick = (
+    ticketId: number,
+    targetStatus: string,
+    targetEpic: string
+  ) => {
+    const res = moveTicket(dataState, ticketId, targetStatus, targetEpic)
+    setDataState([...res])
   }
+  const columns = statusList
+  const epics = epicsList
 
-  const epics = newData.reduce((acc: string[], curr) => {
-    if (!acc.includes(curr.epic)) {
-      acc.push(curr.epic)
-    }
-    return acc
-  }, [])
+  const ticketsSortedByStatus: {[key: string]: Data[]} = {}
 
-  const columns = newData.reduce((acc: string[], curr) => {
-    if (curr.status !== "Done" && !acc.includes(curr.status)) {
-      acc.push(curr.status)
-    }
-    return acc
-  }, [])
-
-  console.log({epics, columns})
+  columns.forEach(col => {
+    dataState.forEach(ticket => {
+      if (ticket.status === col) {
+        if (!ticketsSortedByStatus[col]) {
+          ticketsSortedByStatus[col] = []
+        }
+        ticketsSortedByStatus[col].push(ticket)
+      }
+    })
+  })
 
   return (
-    <Container className="cheese" columns={columnsCount} rows={rowsCount}>
-      {Object.values(dataState).map((epic, i) => {
+    <Container rows={epics.length}>
+      <StatusesBar columns={columns.length}>
+        {columns.map((col, i) => {
+          return <StatusTitle key={i}>{col}</StatusTitle>
+        })}
+      </StatusesBar>
+      {epics.map((epic, i) => {
         return (
-          <>
-            {/* <ColumnHeadersRow cols={dataState.cols} /> */}
-            <GridRow
-              id={i + 1}
-              cols={epic.cols}
-              rowName={epic.name}
-              handleClick={handleClick}
-            />
-          </>
+          <GridRow
+            id={i + 1}
+            rowName={epic}
+            ticketsSortedByStatus={ticketsSortedByStatus}
+            handleClick={handleClick}
+          />
         )
       })}
     </Container>

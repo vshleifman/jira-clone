@@ -1,41 +1,48 @@
 import {useState} from "react"
 import styled from "styled-components"
+import {Data} from "./mockData"
 
 const Cell = styled.div`
-  border: 1px solid orange;
-  gap: 4px;
-  padding: 4px;
+  display: grid;
+  border: 1px solid blue;
+  gap: 12px;
+  padding: 12px;
 `
 
-const Ticket = styled.div`
+const Ticket = styled.div<{id: number}>`
   border: 1px solid green;
   padding: 2px;
 `
 
 const GridCol = ({
-  tickets,
+  tickets = [],
+  epic,
+  status,
   handleClick,
-  id,
 }: {
-  tickets: {[key: string]: {title: string}}
-  handleClick: (ticket: number, newRow: number, newCol: number) => void
-  id: string
+  tickets: Data[]
+  epic: string
+  status: string
+  handleClick: (
+    ticketId: number,
+    targetStatus: string,
+    targetEpic: string
+  ) => void
 }) => {
+  const cellId = `${epic}-${status}`
   const [targetCell, setTargetCell] = useState("")
 
-  const [targetRow, targetCol] = targetCell
-    .split("-")
-    .map(item => item.slice(3))
+  const [targetEpic, targetStatus] = targetCell.split("-")
 
   return (
     <Cell
-      id={id}
+      id={cellId}
       onDrop={e => {
         const {targetTicketId, sourceCellId} = JSON.parse(
           e.dataTransfer.getData("ticketMove")
         )
         if (targetCell !== sourceCellId) {
-          handleClick(targetTicketId, Number(targetRow), Number(targetCol))
+          handleClick(targetTicketId, targetStatus, targetEpic)
         }
       }}
       onDragOverCapture={(e: React.DragEvent<HTMLDivElement>) => {
@@ -44,7 +51,8 @@ const GridCol = ({
         setTargetCell(e.currentTarget.id)
       }}
     >
-      {Object.keys(tickets).map(ticket => {
+      {tickets.map(ticket => {
+        if (ticket.epic !== epic) return null
         return (
           <Ticket
             onDragEnter={(e: React.DragEvent<HTMLDivElement>) => {
@@ -55,14 +63,14 @@ const GridCol = ({
                 "ticketMove",
                 JSON.stringify({
                   targetTicketId: e.currentTarget.id,
-                  sourceCellId: id,
+                  sourceCellId: cellId,
                 })
               )
             }}
             draggable={true}
-            id={ticket}
+            id={ticket.id}
           >
-            {tickets[ticket].title}
+            {ticket.title}
           </Ticket>
         )
       })}

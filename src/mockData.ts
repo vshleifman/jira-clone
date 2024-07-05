@@ -1,149 +1,79 @@
-export const data: Data = {
-  1: {
-    name: "epic1",
-    row: 1,
-    cols: {
-      1: {
-        col: 1,
-        tickets: {
-          1: {title: "ticket1"},
-        },
-      },
-      2: {
-        col: 2,
-        tickets: {
-          2: {title: "ticket2"},
-        },
-      },
-      3: {
-        col: 3,
-        tickets: {
-          // 3: {title: "ticket3"}
-        },
-      },
-      4: {
-        col: 4,
-        tickets: {
-          4: {title: "ticket4"},
-        },
-      },
-      5: {
-        col: 5,
-        tickets: {
-          5: {title: "ticket5"},
-        },
-      },
-    },
-  },
-  2: {
-    name: "epic2",
-    row: 2,
-    cols: {
-      1: {
-        col: 1,
-        tickets: {
-          // 6: {title: "ticket6"}
-        },
-      },
-      2: {
-        col: 2,
-        tickets: {
-          7: {title: "ticket7"},
-          8: {title: "ticket8"},
-        },
-      },
-      3: {
-        col: 3,
-        tickets: {},
-      },
-      4: {
-        col: 4,
-        tickets: {
-          9: {title: "ticket9"},
-        },
-      },
-      5: {
-        col: 5,
-        tickets: {
-          10: {title: "ticket10"},
-        },
-      },
-    },
-  },
-}
-
-export interface Data {
-  [key: number]: {
-    name: string
-    row: number
-    cols: {
-      [key: number]: {
-        col: number
-        tickets: {
-          [key: number]: {
-            title: string
-          }
-        }
-      }
-    }
-  }
-}
-
-export const newData: NewData[] = [
+export const data: Data[] = [
   {
+    id: 1,
     title: "ticket1",
     epic: "epic1",
     status: "Up next",
   },
   {
+    id: 2,
     title: "ticket2",
     epic: "epic1",
     status: "Up next",
   },
   {
+    id: 3,
     title: "ticket3",
     epic: "epic1",
     status: "In progress",
   },
   {
+    id: 4,
     title: "ticket4",
     epic: "epic1",
     status: "On hold",
   },
   {
+    id: 5,
     title: "ticket5",
     epic: "epic1",
     status: "In progress",
   },
   {
+    id: 6,
     title: "ticket6",
     epic: "epic2",
     status: "Up next",
   },
   {
+    id: 7,
     title: "ticket7",
     epic: "epic2",
     status: "Done",
   },
   {
+    id: 8,
     title: "ticket8",
     epic: "epic2",
     status: "In progress",
   },
   {
+    id: 9,
     title: "ticket9",
     epic: "epic2",
     status: "Done",
   },
   {
+    id: 10,
     title: "ticket10",
     epic: "epic2",
     status: "Up next",
   },
 ]
 
-export interface NewData {
+export const hiddenStatuses = ["Done"]
+export const statusList = [
+  "Backlog",
+  "Up next",
+  "In progress",
+  "On hold",
+  "Done",
+].filter(status => !hiddenStatuses.includes(status))
+export const epicsList = ["epic1", "epic2"]
+
+export interface Data {
   title: string
   epic: string
   status: string
+  id: number
 }

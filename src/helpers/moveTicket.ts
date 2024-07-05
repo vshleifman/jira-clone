@@ -1,30 +1,19 @@
 import {Data} from "../mockData"
 
 export const moveTicket = (
-  data: Data,
-  ticketKey: number,
-  newRow: number,
-  newCol: number
+  data: Data[],
+  ticketId: number,
+  targetStatus: string,
+  targetEpic: string
 ) => {
-  console.log({data, ticketKey, newRow, newCol})
+  const ticket = data.find(ticket => {
+    return ticket.id == ticketId
+  })
 
-  let ticketToMove
+  if (!ticket) return data
+  const ticketIndex = data.indexOf(ticket)
+  const updatedTicket = {...ticket, status: targetStatus, epic: targetEpic}
 
-  for (const epic in data) {
-    for (const col in data[epic].cols) {
-      const tickets = data[epic].cols[col].tickets
-      if (tickets[ticketKey]) {
-        console.log(`deleting ${ticketKey}`)
-        ticketToMove = tickets[ticketKey]
-        delete tickets[ticketKey]
-        break
-      }
-    }
-    if (ticketToMove) break
-  }
-
-  if (ticketToMove) {
-    data[newRow].cols[newCol].tickets[ticketKey] = ticketToMove
-  }
+  data[ticketIndex] = updatedTicket
   return data
 }
