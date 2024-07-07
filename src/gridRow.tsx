@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import GridCol from "./gridCol"
-import {Data, statusList} from "./mockData"
+import {Data} from "./mockData"
 
 const Row = styled.div`
   display: grid;
@@ -8,9 +8,11 @@ const Row = styled.div`
   gap: 6px;
 `
 
-const RowHeading = styled.div`
-  padding: 2px 12px;
-  border: 1px solid green;
+const RowHeading = styled.div<{id: number}>`
+  padding: 8px 12px;
+  &:hover {
+    background: #36b0ce;
+  }
 `
 
 const RowBody = styled.div<{cols: number}>`
@@ -22,28 +24,48 @@ const RowBody = styled.div<{cols: number}>`
 const GridRow = ({
   rowName,
   ticketsSortedByStatus,
-  handleClick,
+  handleMoveTicket,
+  statusList,
+  setTargetRow,
+  id,
 }: {
   rowName: string
   ticketsSortedByStatus: {[key: string]: Data[]}
-  handleClick: (
+  id: number
+  handleMoveTicket: (
     ticketId: number,
     targetStatus: string,
     targetEpic: string
   ) => void
-  id: number
+  statusList: string[]
+  setTargetRow: React.Dispatch<React.SetStateAction<string>>
 }) => {
   return (
     <Row>
-      <RowHeading>{rowName}</RowHeading>
+      <RowHeading
+        id={id}
+        onDragStart={(e: React.DragEvent<HTMLDivElement>) => {
+          e.dataTransfer.setData(
+            "columnMove",
+            JSON.stringify({
+              draggedIndex: e.currentTarget.id,
+            })
+          )
+        }}
+        onDragOverCapture={(e: React.DragEvent<HTMLDivElement>) => {
+          e.preventDefault()
+          setTargetRow(e.currentTarget.id)
+        }}
+        draggable={true}
+      >
+        {rowName}
+      </RowHeading>
       <RowBody cols={statusList.length}>
         {statusList.map(col => {
-          console.log({col, tickets: ticketsSortedByStatus[col]})
-
           return (
             <GridCol
               tickets={ticketsSortedByStatus[col]}
-              handleClick={handleClick}
+              handleMoveTicket={handleMoveTicket}
               status={col}
               epic={rowName}
             />

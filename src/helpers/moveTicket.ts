@@ -17,3 +17,15 @@ export const moveTicket = (
   data[ticketIndex] = updatedTicket
   return data
 }
+
+export const handleMoveStatusOrEpic = (
+  draggedIndex: number,
+  droppedIndex: number,
+  initialList: string[]
+) => {
+  const newOrder = [...initialList]
+  newOrder.splice(draggedIndex, 1, initialList[droppedIndex])
+  newOrder.splice(droppedIndex, 1, initialList[draggedIndex])
+
+  return newOrder
+}

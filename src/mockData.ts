@@ -3,7 +3,7 @@ export const data: Data[] = [
     id: 1,
     title: "ticket1",
     epic: "epic1",
-    status: "Up next",
+    status: "Backlog",
   },
   {
     id: 2,
@@ -26,7 +26,7 @@ export const data: Data[] = [
   {
     id: 5,
     title: "ticket5",
-    epic: "epic1",
+    epic: "epic3",
     status: "In progress",
   },
   {
@@ -56,7 +56,7 @@ export const data: Data[] = [
   {
     id: 10,
     title: "ticket10",
-    epic: "epic2",
+    epic: "epic3",
     status: "Up next",
   },
 ]
@@ -69,7 +69,7 @@ export const statusList = [
   "On hold",
   "Done",
 ].filter(status => !hiddenStatuses.includes(status))
-export const epicsList = ["epic1", "epic2"]
+export const epicsList = ["epic1", "epic2", "epic3"]
 
 export interface Data {
   title: string

@@ -4,26 +4,33 @@ import {Data} from "./mockData"
 
 const Cell = styled.div`
   display: grid;
-  border: 1px solid blue;
+  background: #73c2df;
+  border-radius: 5px;
   gap: 12px;
-  padding: 12px;
+  padding: 8px 10px;
 `
 
 const Ticket = styled.div<{id: number}>`
   border: 1px solid green;
-  padding: 2px;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px 0px #00000067;
+  padding: 8px;
+  background: #ffffff;
+  &:hover {
+    background: #91c7d4;
+  }
 `
 
 const GridCol = ({
   tickets = [],
   epic,
   status,
-  handleClick,
+  handleMoveTicket,
 }: {
   tickets: Data[]
   epic: string
   status: string
-  handleClick: (
+  handleMoveTicket: (
     ticketId: number,
     targetStatus: string,
     targetEpic: string
@@ -38,11 +45,11 @@ const GridCol = ({
     <Cell
       id={cellId}
       onDrop={e => {
-        const {targetTicketId, sourceCellId} = JSON.parse(
-          e.dataTransfer.getData("ticketMove")
-        )
+        const transferData = e.dataTransfer.getData("ticketMove")
+        if (!transferData) return
+        const {targetTicketId, sourceCellId} = JSON.parse(transferData)
         if (targetCell !== sourceCellId) {
-          handleClick(targetTicketId, targetStatus, targetEpic)
+          handleMoveTicket(targetTicketId, targetStatus, targetEpic)
         }
       }}
       onDragOverCapture={(e: React.DragEvent<HTMLDivElement>) => {
@@ -55,9 +62,6 @@ const GridCol = ({
         if (ticket.epic !== epic) return null
         return (
           <Ticket
-            onDragEnter={(e: React.DragEvent<HTMLDivElement>) => {
-              console.log(e.currentTarget.id)
-            }}
             onDragStart={(e: React.DragEvent<HTMLDivElement>) => {
               e.dataTransfer.setData(
                 "ticketMove",
