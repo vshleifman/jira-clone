@@ -1,6 +1,8 @@
 import styled from "styled-components"
 import GridCol from "./gridCol"
 import {Data} from "./mockData"
+import {useLayoutStore} from "./store"
+import {useShallow} from "zustand/react/shallow"
 
 const Row = styled.div`
   display: grid;
@@ -24,22 +26,19 @@ const RowBody = styled.div<{cols: number}>`
 const GridRow = ({
   rowName,
   ticketsSortedByStatus,
-  handleMoveTicket,
-  statusList,
-  setTargetRow,
   id,
 }: {
   rowName: string
   ticketsSortedByStatus: {[key: string]: Data[]}
   id: number
-  handleMoveTicket: (
-    ticketId: number,
-    targetStatus: string,
-    targetEpic: string
-  ) => void
-  statusList: string[]
-  setTargetRow: React.Dispatch<React.SetStateAction<string>>
 }) => {
+  const {setTargetRow, statusList} = useLayoutStore(
+    useShallow(state => ({
+      setTargetRow: state.setTargetRow,
+      statusList: state.columnOrderedList,
+    }))
+  )
+
   return (
     <Row>
       <RowHeading
@@ -65,7 +64,6 @@ const GridRow = ({
           return (
             <GridCol
               tickets={ticketsSortedByStatus[col]}
-              handleMoveTicket={handleMoveTicket}
               status={col}
               epic={rowName}
             />

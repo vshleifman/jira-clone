@@ -1,6 +1,8 @@
 import {useState} from "react"
 import styled from "styled-components"
 import {Data} from "./mockData"
+import {moveTicket} from "./helpers/moveTicket"
+import {useDataStore} from "./store"
 
 const Cell = styled.div`
   display: grid;
@@ -25,21 +27,25 @@ const GridCol = ({
   tickets = [],
   epic,
   status,
-  handleMoveTicket,
 }: {
   tickets: Data[]
   epic: string
   status: string
-  handleMoveTicket: (
-    ticketId: number,
-    targetStatus: string,
-    targetEpic: string
-  ) => void
 }) => {
+  const {dataState, setDataState} = useDataStore()
   const cellId = `${epic}-${status}`
   const [targetCell, setTargetCell] = useState("")
 
   const [targetEpic, targetStatus] = targetCell.split("-")
+
+  const handleMoveTicket = (
+    ticketId: number,
+    targetStatus: string,
+    targetEpic: string
+  ) => {
+    const res = moveTicket(dataState, ticketId, targetStatus, targetEpic)
+    setDataState([...res])
+  }
 
   return (
     <Cell

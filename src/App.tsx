@@ -1,8 +1,8 @@
-import {useState} from "react"
 import styled from "styled-components"
-import {Data, data, epicsList, statusList} from "./mockData"
-import {handleMoveStatusOrEpic, moveTicket} from "./helpers/moveTicket"
+import {Data} from "./mockData"
+import {handleMoveStatusOrEpic} from "./helpers/moveTicket"
 import GridRow from "./gridRow"
+import {useDataStore, useLayoutStore} from "./store"
 
 const Container = styled.div<{rows: number}>`
   display: grid;
@@ -33,24 +33,19 @@ const StatusTitle = styled.div<{id: number}>`
 `
 
 const App = () => {
-  const [dataState, setDataState] = useState(data)
+  const dataState = useDataStore(state => state.dataState)
+  const {
+    targetColumn,
+    setTargetColumn,
+    targetRow,
+    columnOrderedList,
+    setColumnOrderedList,
+    rowOrderedList,
+    setRowOrderedList,
+  } = useLayoutStore()
 
-  const [targetColumn, setTargetColumn] = useState("")
-  const [targetRow, setTargetRow] = useState("")
-  const [statusOrderedList, setStatusOrderedList] = useState(statusList)
-  const [epicsOrderedList, setEpicsOrderedList] = useState(epicsList)
-
-  const handleMoveTicket = (
-    ticketId: number,
-    targetStatus: string,
-    targetEpic: string
-  ) => {
-    const res = moveTicket(dataState, ticketId, targetStatus, targetEpic)
-    setDataState([...res])
-  }
-
-  const columns = statusOrderedList
-  const epics = epicsOrderedList
+  const columns = columnOrderedList
+  const epics = rowOrderedList
 
   const ticketsSortedByStatus: {[key: string]: Data[]} = {}
 
@@ -73,11 +68,11 @@ const App = () => {
             e.dataTransfer.getData("columnMove")
           )
           if (draggedIndex !== targetColumn) {
-            setStatusOrderedList(
+            setColumnOrderedList(
               handleMoveStatusOrEpic(
                 Number(draggedIndex),
                 Number(targetColumn),
-                statusOrderedList
+                columnOrderedList
               )
             )
           }
@@ -114,11 +109,11 @@ const App = () => {
           if (!transferData) return
           const {draggedIndex} = JSON.parse(transferData)
           if (draggedIndex !== targetRow) {
-            setEpicsOrderedList(
+            setRowOrderedList(
               handleMoveStatusOrEpic(
                 Number(draggedIndex),
                 Number(targetRow),
-                epicsOrderedList
+                rowOrderedList
               )
             )
           }
@@ -129,9 +124,6 @@ const App = () => {
             <GridRow
               rowName={epic}
               ticketsSortedByStatus={ticketsSortedByStatus}
-              handleMoveTicket={handleMoveTicket}
-              statusList={statusOrderedList}
-              setTargetRow={setTargetRow}
               id={i}
             />
           )
