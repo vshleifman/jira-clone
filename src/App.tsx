@@ -7,8 +7,6 @@ import {useDataStore, useLayoutStore} from "./store"
 const Container = styled.div<{rows: number}>`
   display: grid;
   grid-template-rows: min-content auto;
-  height: 66vh;
-  width: 100%;
   gap: 8px;
   padding: 4px;
   border: 1px solid black;

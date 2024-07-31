@@ -3,6 +3,7 @@ import styled from "styled-components"
 import {Data} from "./mockData"
 import {moveTicket} from "./helpers/moveTicket"
 import {useDataStore} from "./store"
+import Ticket from "./Ticket"
 
 const Cell = styled.div`
   display: grid;
@@ -10,9 +11,9 @@ const Cell = styled.div`
   border-radius: 5px;
   gap: 12px;
   padding: 8px 10px;
+  min-height: 100px;
 `
-
-const Ticket = styled.div<{id: number}>`
+const TicketWrapper = styled.div<{id: number}>`
   border: 1px solid green;
   border-radius: 5px;
   box-shadow: 2px 2px 5px 0px #00000067;
@@ -67,7 +68,9 @@ const GridCol = ({
       {tickets.map(ticket => {
         if (ticket.epic !== epic) return null
         return (
-          <Ticket
+          <TicketWrapper
+            key={ticket.id}
+            id={ticket.id}
             onDragStart={(e: React.DragEvent<HTMLDivElement>) => {
               e.dataTransfer.setData(
                 "ticketMove",
@@ -78,10 +81,9 @@ const GridCol = ({
               )
             }}
             draggable={true}
-            id={ticket.id}
           >
-            {ticket.title}
-          </Ticket>
+            <Ticket id={ticket.id} />
+          </TicketWrapper>
         )
       })}
     </Cell>

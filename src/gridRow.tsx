@@ -63,6 +63,7 @@ const GridRow = ({
         {statusList.map(col => {
           return (
             <GridCol
+              key={col}
               tickets={ticketsSortedByStatus[col]}
               status={col}
               epic={rowName}
